@@ -22,20 +22,18 @@ int main(int argc, char **argv) {
 
 	ros::init(argc, argv, "move_node");
 	ros::NodeHandle n;
-	ros::Publisher chatter_pub = n.advertise<std_msgs::String>("/cmd_vel", 1000);
+	ros::Publisher chatter_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 100);
 	ros::Rate loop_rate(10);
 
 	int count = 0;
 	  while (ros::ok())
 	  {
 
-		 std_msgs::String msg;
+		  geometry_msgs::Twist cmd_msg;
+		cmd_msg.linear.x = 0.5;
+		cmd_msg.angular.z = 0;
 
-		 std::stringstream ss;
-		 ss << "geometry_msgs/Twist -r 10 -- '[0.3, 0.0, 0.0]' '[0.0, 0.0, -0.9] " << count;
-		 msg.data = ss.str();
-
-		chatter_pub.publish(msg);
+		chatter_pub.publish(cmd_msg);
 		
 		ros::spinOnce();
 		
