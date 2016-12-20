@@ -18,7 +18,14 @@
 #include <moveit_msgs/PickupAction.h>
 #include <moveit_msgs/PlaceAction.h>
 
+
+/*COMMAND TO RUN: move_node <Velocity> <Left Angle> <Time To Suspend>
+DESCRIPTION TO THE THIRD PARAMETER <Time To Suspend>: The robot will stop moving after
+<Time To Suspend>/10 seconds (I think). If this parameter is not inputted it will continue
+moving until manually terminated.*/
+
 int main(int argc, char **argv) {
+	if (argc<3) return 0;
 
 	ros::init(argc, argv, "move_node");
 	ros::NodeHandle n;
@@ -26,12 +33,14 @@ int main(int argc, char **argv) {
 	ros::Rate loop_rate(10);
 
 	int count = 0;
-	  while (ros::ok())
+	int stop_time=0;
+	if (argc>3) stop_time=std::atoi(argv[3]);
+	  while (ros::ok() && (stop_time<=0 || count<stop_time))
 	  {
 
 		  geometry_msgs::Twist cmd_msg;
-		cmd_msg.linear.x = 0.5;
-		cmd_msg.angular.z = 0;
+		cmd_msg.linear.x = std::atof(argv[1]);
+		cmd_msg.angular.z = std::atof(argv[2]);
 
 		chatter_pub.publish(cmd_msg);
 		
