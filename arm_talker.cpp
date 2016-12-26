@@ -1,10 +1,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 
-#include <moveit/move_group_interface/move_group.h>
-#include <moveit/planning_scene_interface/planning_scene_interface.h>
-#include <moveit_msgs/DisplayRobotState.h>
-#include <moveit_msgs/DisplayTrajectory.h>
+#include <sstream>
 
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
@@ -28,8 +25,7 @@ int main(int argc, char **argv)
    * The first NodeHandle constructed will fully initialize this node, and the last
    * NodeHandle destructed will close down the node.
    */
-  ros::NodeHandle nodeHandle;
-
+  ros::NodeHandle n;
 
   /**
    * The advertise() function is how you tell ROS that you want to
@@ -48,7 +44,7 @@ int main(int argc, char **argv)
    * than we can send them, the number here specifies how many messages to
    * buffer up before throwing some away.
    */
-  ros::Publisher chatter_pub = nodeHandle.advertise<geometry_msgs::PoseStamped>("chatter", 1000);
+  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
 
   ros::Rate loop_rate(10);
 
@@ -62,22 +58,14 @@ int main(int argc, char **argv)
     /**
      * This is a message object. You stuff it with data, and then publish it.
      */
-    /*std_msgs::String msg;
+    std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "hello world " << count;
+    /*Get real parameters from tutorial*/
+    ss << "1 2 3 4" << count;
     msg.data = ss.str();
 
-    ROS_INFO("%s", msg.data.c_str());*/
-
-
-    geometry_msgs::PoseStamped target_pose;
-    target_pose.header.frame_id="base_footprint";
-    target_pose.header.stamp=ros::Time::now()+ros::Duration(2.1);
-    target_pose.pose.position.x = 0.5;
-    target_pose.pose.position.y = 0.0;
-    target_pose.pose.position.z = 0.9;
-    target_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0,0.0,0.0); ;
+    ROS_INFO("%s", msg.data.c_str());
 
     /**
      * The publish() function is how you send messages. The parameter
@@ -85,7 +73,7 @@ int main(int argc, char **argv)
      * given as a template parameter to the advertise<>() call, as was done
      * in the constructor above.
      */
-    chatter_pub.publish(target_pose);
+    chatter_pub.publish(msg);
 
     ros::spinOnce();
 
