@@ -1,5 +1,28 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
+#include "robotican_demos/arm_msg.h"
+
+
+#include <std_srvs/Trigger.h>
+#include <geometry_msgs/PointStamped.h>
+#include <trajectory_msgs/JointTrajectory.h>
+#include <std_msgs/Empty.h>
+#include <tf/transform_listener.h>
+#include "tf/message_filter.h"
+#include "message_filters/subscriber.h"
+#include <actionlib/client/simple_action_client.h>
+#include <control_msgs/GripperCommandAction.h>
+#include <moveit/move_group_interface/move_group.h>
+#include <moveit/kinematics_metrics/kinematics_metrics.h>
+#include <moveit_msgs/WorkspaceParameters.h>
+#include <moveit/trajectory_processing/iterative_time_parameterization.h>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
+#include <std_srvs/SetBool.h>
+#include <moveit_msgs/PickupAction.h>
+#include <moveit_msgs/PlaceAction.h>
+
+
+
 
 #include <sstream>
 
@@ -25,7 +48,39 @@ int main(int argc, char **argv)
    * The first NodeHandle constructed will fully initialize this node, and the last
    * NodeHandle destructed will close down the node.
    */
-  ros::NodeHandle n;
+
+
+  ros::NodeHandle body_node_handle;
+  ros::Publisher chatter_pub = body_node_handle.advertise<geometry_msgs::Twist>("/cmd_vel", 100);
+  ros::Rate loop_rate(10);
+
+  int count = 0;
+  int stop_time=50;
+  while (ros::ok() && (stop_time<=0 || count<stop_time))
+  {
+
+    geometry_msgs::Twist cmd_msg;
+    cmd_msg.linear.x = 0.6;
+    cmd_msg.angular.z = -0.9;
+
+    chatter_pub.publish(cmd_msg);
+    
+    ros::spinOnce();
+    
+    loop_rate.sleep();
+    ++count;
+
+  }
+
+
+
+
+
+
+
+
+
+  ros::NodeHandle arm_node_handle;
 
   /**
    * The advertise() function is how you tell ROS that you want to
@@ -44,28 +99,33 @@ int main(int argc, char **argv)
    * than we can send them, the number here specifies how many messages to
    * buffer up before throwing some away.
    */
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
-
-  ros::Rate loop_rate(10);
+  ros::Publisher arm_chatter_pub = arm_node_handle.advertise<robotican_demos::arm_msg>("chatter", 1000);
 
   /**
    * A count of how many messages we have sent. This is used to create
    * a unique string for each message.
    */
-  int count = 0;
-  while (ros::ok())
+  count = 0;
+  while (ros::ok() && (stop_time<=0 || count<stop_time))
   {
     /**
      * This is a message object. You stuff it with data, and then publish it.
      */
-    std_msgs::String msg;
+    robotican_demos::arm_msg msg;
 
-    std::stringstream ss;
-    /*Get real parameters from tutorial*/
+    //msg.w = 0.1;
+    msg.x = 0.1;
+    msg.y = 0.1;
+    msg.z = 0.1;
+
+
+
+    /*std::stringstream ss;
+    Get real parameters from tutorial
     ss << "1 2 3 4" << count;
-    msg.data = ss.str();
+    msg.data = ss.str();*/
 
-    ROS_INFO("%s", msg.data.c_str());
+    ROS_INFO("%f, %f, %f", msg.x, msg.y, msg.z);
 
     /**
      * The publish() function is how you send messages. The parameter
@@ -73,7 +133,7 @@ int main(int argc, char **argv)
      * given as a template parameter to the advertise<>() call, as was done
      * in the constructor above.
      */
-    chatter_pub.publish(msg);
+    arm_chatter_pub.publish(msg);
 
     ros::spinOnce();
 
