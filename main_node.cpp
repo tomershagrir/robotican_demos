@@ -55,23 +55,30 @@ int main(int argc, char **argv)
   ros::Rate loop_rate(10);
 
   int count = 0;
-  int stop_time=50;
-  while (ros::ok() && (stop_time<=0 || count<stop_time))
+  int stop_time=10;
+  bool foundLightSwitch = false;
+
+  while (!foundLightSwitch)
   {
+    while (ros::ok() && (stop_time<=0 || count<stop_time))
+    {
 
-    geometry_msgs::Twist cmd_msg;
-    cmd_msg.linear.x = 0.6;
-    cmd_msg.angular.z = -0.9;
+      geometry_msgs::Twist cmd_msg;
+      cmd_msg.linear.x = 0.6;
+      cmd_msg.angular.z = -0.9;
 
-    chatter_pub.publish(cmd_msg);
-    
-    ros::spinOnce();
-    
-    loop_rate.sleep();
-    ++count;
+      chatter_pub.publish(cmd_msg);
+      
+      ros::spinOnce();
+      
+      loop_rate.sleep();
+      ++count;
 
+    }
+    //check with pointcloud if lightswitch is found
   }
 
+  //move towards light switch
 
 
 
@@ -80,6 +87,8 @@ int main(int argc, char **argv)
 
 
 
+
+  //move arm towards light switch
   ros::NodeHandle arm_node_handle;
 
   /**
