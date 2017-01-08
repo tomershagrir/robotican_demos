@@ -66,11 +66,11 @@ void getMessagesCallback(double arr[3]){
 		++count; 
 	    }
 	}
-        if (arr[0]>(pic_width/2)-epsilon && arr[0]<(pic_width/2)+epsilon && arr[2]<closeEnough) //reached point
+        if (arr[0]>(pic_width/2)-epsilon && arr[0]<(pic_width/2)+epsilon && arr[2]<=closeEnough) //reached point
 	{
 	  return;
 	}
-	else if (arr[0]>(pic_width/2)-epsilon && arr[0]<(pic_width/2)+epsilon){ //point in front of robot; moving forward
+	else if (arr[0]>=(pic_width/2)-epsilon && arr[0]<=(pic_width/2)+epsilon){ //point in front of robot; moving forward
 	       int count = 0;
 	    while (ros::ok() && (forwardTime<=0 || count<forwardTime))
 	    {
