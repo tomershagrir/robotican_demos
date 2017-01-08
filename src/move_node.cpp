@@ -66,7 +66,7 @@ void getMessagesCallback(double arr[3]){
 		++count; 
 	    }
 	}
-        if (arr[0]>(pic_width/2)-epsilon && arr[0]<(pic_width/2)+epsilon && arr[2]<=closeEnough) //reached point
+        if (arr[0]>=(pic_width/2)-epsilon && arr[0]<=(pic_width/2)+epsilon && arr[2]<=closeEnough) //reached point
 	{
 	  return;
 	}
