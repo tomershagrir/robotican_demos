@@ -11,48 +11,16 @@
 #include <string>
 #include <vector>
 
-/*void split(const std::string &s, char delim, std::vector<std::string> &elems) {
-    std::stringstream ss;
-    ss.str(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        elems.push_back(item);
-    }
-}*/
-
 void armDirectionCallback(const robotican_demos::arm_msg& msg)
 {
     static const std::string ARM_PLANNING_GROUP = "right_arm";
     moveit::planning_interface::MoveGroup move_group(ARM_PLANNING_GROUP);
 
-    //std::vector<std::string> split_msg;
-    //split(msg, ' ', split_msg);
-
     geometry_msgs::Pose target_pose;
-    //target_pose.header.stamp=ros::Time::now()+ros::Duration(2.1);
-    //target_pose.orientation.w = msg.w;
     target_pose.position.x = msg.x;
     target_pose.position.y = msg.y;
     target_pose.position.z = msg.z;
     move_group.setPoseTarget(target_pose);
-
-
-    /*geometry_msgs::PoseStamped target_pose;
-    target_pose.header.frame_id="base_footprint";
-    target_pose.header.stamp=ros::Time::now()+ros::Duration(2.1);
-    target_pose.pose.position.x = 0.5;
-    target_pose.pose.position.y = 0.0;
-    target_pose.pose.position.z = 0.9;
-    target_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0,0.0,0.0); ;
-    group.setPoseTarget(target_pose);
-    moveit::planning_interface::MoveGroup::Plan my_plan;
-    bool success = group.plan(my_plan);
-    ROS_INFO("plan: %s",success?"SUCCESS":"FAILED");
-    if(success) {
-        ROS_INFO("Moving...");
-        group.move();
-    }
-    sleep(5);*/
 
     move_group.move();
 }
