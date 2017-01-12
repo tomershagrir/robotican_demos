@@ -24,8 +24,6 @@ find_package(catkin REQUIRED COMPONENTS
         moveit_ros_planning_interface
 
         pr2_controllers_msgs
-
-        message_generation
         )
 
 ## System dependencies are found with CMake's conventions
@@ -63,10 +61,11 @@ find_package(cmake_modules REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
- add_message_files(
-   FILES
-   arm_msg.msg
-)
+# add_message_files(
+#   FILES
+#   Message1.msg
+#   Message2.msg
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(robotican_common
@@ -83,11 +82,10 @@ find_package(cmake_modules REQUIRED)
 # )
 
 ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   std_msgs
- )
-
+# generate_messages(
+#   DEPENDENCIES
+#   std_msgs
+# )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -121,7 +119,7 @@ find_package(cmake_modules REQUIRED)
 catkin_package(
         #  INCLUDE_DIRS include
         #  LIBRARIES robotican_demos
-        CATKIN_DEPENDS roscpp rospy robotican_common std_msgs message_runtime moveit_core moveit_ros_planning moveit_ros_planning_interface
+        CATKIN_DEPENDS roscpp rospy robotican_common std_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface
         #  DEPENDS system_lib
 )
 
@@ -166,11 +164,10 @@ target_link_libraries(arm_jta_client ${catkin_LIBRARIES})
 add_executable(arm_trajectory_demo src/arm_trajectory_demo.cpp)
 target_link_libraries(arm_trajectory_demo ${catkin_LIBRARIES})
 
-add_executable(main_node src/main_node.cpp)
-target_link_libraries(main_node ${catkin_LIBRARIES})
+add_executable(find_objects src/find_objects.cpp)
+target_link_libraries(find_objects ${catkin_LIBRARIES})
 
-add_executable(arm_listener src/arm_listener.cpp)
-target_link_libraries(arm_listener ${catkin_LIBRARIES})
+
 
 
 
