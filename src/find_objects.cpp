@@ -25,6 +25,8 @@
 #include <moveit_msgs/DisplayRobotState.h>
 #include <moveit_msgs/DisplayTrajectory.h>
 
+#include "robotican_demos/arm_msg.h"
+
 using namespace cv;
 
 bool debug_vision=false;
@@ -161,27 +163,24 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
       if (((arr[0]>=(pic_width/2)-epsilon && arr[0]<=(pic_width/2)+epsilon) || focus) && arr[2]<=closeEnough) //reached point
     	{
     	  //NOAM CODE
-        static const std::string ARM_PLANNING_GROUP = "right_arm";
-        moveit::planning_interface::MoveGroup move_group(ARM_PLANNING_GROUP);
+        robotican_demos::arm_msg msg;
+        msg.x = arr[0];
+        msg.y = arr[1];
+        msg.z = arr[2];
 
-        moveit::planning_interface::MoveGroup group("arm");
+        ros::NodeHandle arm_node_handle;
+        ros::Publisher arm_chatter_pub = arm_node_handle.advertise<robotican_demos::arm_msg>("chatter", 1000);
+        int count = 0;
+        int stop_time = 10;
+        while (ros::ok() && (stop_time<=0 || count<stop_time))
+        {
+          arm_chatter_pub.publish(msg);
 
-        group.setPlannerId("RRTConnectkConfigDefault");
-        group.setPoseReferenceFrame("base_footprint");
-        group.setStartStateToCurrentState();
-        ROS_INFO("Planning reference frame: %s", group.getPlanningFrame().c_str());
-        ROS_INFO("End effector reference frame: %s", group.getEndEffectorLink().c_str());
+          ros::spinOnce();
 
-        //std::vector<std::string> split_msg;
-        //split(msg, ' ', split_msg);
-
-        geometry_msgs::Pose target_pose;
-        target_pose.position.x = 0.2;
-        target_pose.position.y = 0.5;
-        target_pose.position.z = 0.5;
-        //target_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0,0.0,0.0);
-        move_group.setPoseTarget(target_pose);
-        move_group.move();
+          loop_rate.sleep();
+          ++count;
+        }
     	}
 	    else if ((arr[0]>=(pic_width/2)-epsilon && arr[0]<=(pic_width/2)+epsilon) || focus){ //point in front of robot; moving forward
 	      
