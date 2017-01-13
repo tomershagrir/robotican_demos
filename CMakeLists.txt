@@ -24,6 +24,8 @@ find_package(catkin REQUIRED COMPONENTS
         moveit_ros_planning_interface
 
         pr2_controllers_msgs
+
+        message_generation
         )
 
 ## System dependencies are found with CMake's conventions
@@ -61,11 +63,12 @@ find_package(cmake_modules REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+   FILES
+   arm_msg.msg
+ # Message1.msg
+ # Message2.msg
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(robotican_common
@@ -82,10 +85,10 @@ find_package(cmake_modules REQUIRED)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+ generate_messages(
+   DEPENDENCIES
+   std_msgs
+ )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -119,7 +122,9 @@ find_package(cmake_modules REQUIRED)
 catkin_package(
         #  INCLUDE_DIRS include
         #  LIBRARIES robotican_demos
-        CATKIN_DEPENDS roscpp rospy robotican_common std_msgs moveit_core moveit_ros_planning moveit_ros_planning_interface
+        CATKIN_DEPENDS roscpp rospy robotican_common std_msgs moveit_core moveit_ros_planning 
+        message_runtime
+        moveit_ros_planning_interface
         #  DEPENDS system_lib
 )
 
