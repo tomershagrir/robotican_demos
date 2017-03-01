@@ -123,8 +123,7 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
 
     
 
-    if (have_object) 
-    {
+    if (have_object) {
 
       //ROS_INFO("swSNI HOMO");
       geometry_msgs::PoseStamped target_pose;
@@ -185,14 +184,16 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
       {//point in sight and right of the robot - rotate right
         rotateBody(rotateTime, rotateVel, (-1)*rotateAngle);
       }
+      }
+      else
+      {
+        ros::NodeHandle n;
+        ros::Publisher chatter_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 100);
+        ros::Rate loop_rate(10);
+        rotateBody(rotateTime, rotateVel, (-1)*rotateAngle);
     }
-    else
-    {
-      ros::NodeHandle n;
-      ros::Publisher chatter_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 100);
-      ros::Rate loop_rate(10);
-      rotateBody(rotateTime, rotateVel, (-1)*rotateAngle);
-    }
+
+
 }
 
 // void obj_msgCallback(const boost::shared_ptr<const geometry_msgs::PoseStamped>& point_ptr)
