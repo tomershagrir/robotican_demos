@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>robotican_demos</name>
+  <name>robotican_nty</name>
   <version>0.0.0</version>
-  <description>The robotican_demos package</description>
+  <description>The robotican_nty package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
