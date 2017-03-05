@@ -146,12 +146,13 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
 	    
 	    if (arr[0]==notInSightVal && arr[1]==notInSightVal && arr[2]==notInSightVal) 
       {
+		  
         //rotateBody(forwardTime, searchVel, searchAngle);
 	    }
       if (((arr[0]>=(pic_width/2)-epsilon && arr[0]<=(pic_width/2)+epsilon) || focus) && arr[2]<=closeEnough) 
     	{
         //can reach point with arm
-
+		ROS_INFO("move arm!!");
         static const std::string ARM_PLANNING_GROUP = "/torso_position_controller/command";
         moveit::planning_interface::MoveGroup move_group(ARM_PLANNING_GROUP);
 
@@ -188,15 +189,33 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
 	    else if ((arr[0]>=(pic_width/2)-epsilon && arr[0]<=(pic_width/2)+epsilon) || focus)
       { //point in front of robot; moving forward
 	      focus=1;
+	      
+	      ROS_INFO("front!!!!");
         //rotateBody(forwardTime, forwardVel, forwardAngle);
+        
+        ROS_INFO("move arm!!");
+        static const std::string ARM_PLANNING_GROUP = "/torso_position_controller/command";
+        moveit::planning_interface::MoveGroup move_group(ARM_PLANNING_GROUP);
+
+        geometry_msgs::Pose target_pose;
+        target_pose.position.x = arr[0];
+        target_pose.position.y = arr[1];
+        target_pose.position.z = arr[2];
+        move_group.setPoseTarget(target_pose);
+
+        ROS_INFO("moving arm");
+
+        move_group.move();
       }
       else if (arr[0]<pic_width/2) 
       {//point in sight and left of the robot -rotate left
         //rotateBody(rotateTime, rotateVel, rotateAngle);
+        ROS_INFO("left!!!");
       }
       else  if (arr[0]>pic_width/2)  
       {//point in sight and right of the robot - rotate right
         //rotateBody(rotateTime, rotateVel, (-1)*rotateAngle);
+        ROS_INFO("right!!!");
       }
     }
     else
@@ -309,6 +328,7 @@ bool find_object(Mat input, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloudp,Point
 
 int main(int argc, char **argv) 
 {
+	ROS_INFO("start");
   ros::init(argc, argv, "find_objects_node");
   ros::NodeHandle n1;
 
