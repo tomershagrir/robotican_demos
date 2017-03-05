@@ -153,7 +153,7 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
     	{
         //can reach point with arm
 		ROS_INFO("move arm!!");
-        static const std::string ARM_PLANNING_GROUP = "/torso_position_controller/command";
+        static const std::string ARM_PLANNING_GROUP = "arm";
         moveit::planning_interface::MoveGroup move_group(ARM_PLANNING_GROUP);
 
         geometry_msgs::Pose target_pose;
