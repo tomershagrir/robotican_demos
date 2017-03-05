@@ -63,12 +63,12 @@ find_package(cmake_modules REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-   FILES
+##add_message_files(
+ ##  FILES
  #  arm_msg.msg
  # Message1.msg
  # Message2.msg
- )
+ #)
 
 ## Generate services in the 'srv' folder
 # add_service_files(robotican_common
@@ -141,33 +141,7 @@ catkin_package(
 include_directories(
         ${catkin_INCLUDE_DIRS}
 )
-add_executable(simple_navigation_goals src/simple_navigation_goals.cpp)
-target_link_libraries(simple_navigation_goals ${catkin_LIBRARIES})
 
-add_executable(moveit_group_goal src/moveit_group_goal.cpp)
-target_link_libraries(moveit_group_goal ${catkin_LIBRARIES})
-
-add_executable(pan_tilt_api src/pan_tilt_api.cpp)
-target_link_libraries(pan_tilt_api ${catkin_LIBRARIES})
-
-add_executable(gripper_api src/gripper_api.cpp)
-target_link_libraries(gripper_api ${catkin_LIBRARIES})
-
-add_executable(pick_and_place src/pick_and_place.cpp)
-target_link_libraries(pick_and_place ${catkin_LIBRARIES})
-
-add_executable(drive_and_pick src/drive_and_pick.cpp)
-add_dependencies(drive_and_pick ${robotican_common_EXPORTED_TARGETS})
-target_link_libraries(drive_and_pick ${catkin_LIBRARIES})
-
-add_executable(point_head src/point_head.cpp)
-target_link_libraries(point_head ${catkin_LIBRARIES})
-
-add_executable(arm_jta_client src/arm_jta_client.cpp)
-target_link_libraries(arm_jta_client ${catkin_LIBRARIES})
-
-add_executable(arm_trajectory_demo src/arm_trajectory_demo.cpp)
-target_link_libraries(arm_trajectory_demo ${catkin_LIBRARIES})
 
 add_executable(find_objects src/find_objects.cpp)
 target_link_libraries(find_objects ${catkin_LIBRARIES})
