@@ -25,7 +25,7 @@
 #include <moveit_msgs/DisplayRobotState.h>
 #include <moveit_msgs/DisplayTrajectory.h>
 
-#include "robotican_demos/arm_msg.h"
+//#include "robotican_demos/arm_msg.h"
 
 using namespace cv;
 
@@ -151,6 +151,21 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
       if (((arr[0]>=(pic_width/2)-epsilon && arr[0]<=(pic_width/2)+epsilon) || focus) && arr[2]<=closeEnough) 
     	{
         //can reach point with arm
+
+        static const std::string ARM_PLANNING_GROUP = "/torso_position_controller/command";
+        moveit::planning_interface::MoveGroup move_group(ARM_PLANNING_GROUP);
+
+        geometry_msgs::Pose target_pose;
+        target_pose.position.x = arr[0];
+        target_pose.position.y = arr[1];
+        target_pose.position.z = arr[2];
+        move_group.setPoseTarget(target_pose);
+
+        ROS_INFO("moving arm");
+
+        move_group.move();
+
+/*
         robotican_demos::arm_msg msg;
         msg.x = arr[0];
         msg.y = arr[1];
@@ -168,7 +183,7 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
 
           loop_rate.sleep();
           ++count;
-        }
+        }*/
     	}
 	    else if ((arr[0]>=(pic_width/2)-epsilon && arr[0]<=(pic_width/2)+epsilon) || focus)
       { //point in front of robot; moving forward
@@ -295,11 +310,11 @@ bool find_object(Mat input, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloudp,Point
 int main(int argc, char **argv) 
 {
   ros::init(argc, argv, "find_objects_node");
-  ros::NodeHandle n;
+  ros::NodeHandle n1;
 
-  pose_pub=n.advertise<geometry_msgs::PoseStamped>("object_pose",10);
-  chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
-  ros::Subscriber pcl_sub = n.subscribe("/torso_camera/depth_registered/points", 1, cloud_cb);
+  pose_pub=n1.advertise<geometry_msgs::PoseStamped>("object_pose",10);
+  chatter_pub = n1.advertise<std_msgs::String>("chatter", 1000);
+  ros::Subscriber pcl_sub = n1.subscribe("/torso_camera/depth_registered/points", 1, cloud_cb);
   
   ros::spin();
   

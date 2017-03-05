@@ -65,7 +65,7 @@ find_package(cmake_modules REQUIRED)
 ## Generate messages in the 'msg' folder
 add_message_files(
    FILES
-   arm_msg.msg
+ #  arm_msg.msg
  # Message1.msg
  # Message2.msg
  )
