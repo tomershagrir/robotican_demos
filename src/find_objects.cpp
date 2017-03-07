@@ -1,5 +1,5 @@
 
-
+ //http://wiki.ros.org/robotican/Tutorials/Arm%20manipulation
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
@@ -41,6 +41,7 @@ void rotateBody(int rotateTime, double rotateVel, double rotateAngle);
 
 
 ros::Publisher chatter_pub;
+
 
 tf::TransformListener *listener_ptr;
 
@@ -171,7 +172,6 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
         msg.x = arr[0];
         msg.y = arr[1];
         msg.z = arr[2];
-
         ros::NodeHandle arm_node_handle;
         ros::Publisher arm_chatter_pub = arm_node_handle.advertise<robotican_demos::arm_msg>("chatter", 1000);
         int count = 0;
@@ -179,9 +179,7 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
         while (ros::ok() && (stop_time<=0 || count<stop_time))
         {
           arm_chatter_pub.publish(msg);
-
           ros::spinOnce();
-
           loop_rate.sleep();
           ++count;
         }*/
@@ -211,11 +209,52 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
       {//point in sight and left of the robot -rotate left
         //rotateBody(rotateTime, rotateVel, rotateAngle);
         ROS_INFO("left!!!");
+        static const std::string ARM_PLANNING_GROUP = "arm";
+        moveit::planning_interface::MoveGroup move_group(ARM_PLANNING_GROUP);
+
+        geometry_msgs::Pose target_pose;
+        target_pose.position.x = arr[0];
+        target_pose.position.y = arr[1];
+        target_pose.position.z = arr[2];
+        move_group.setPoseTarget(target_pose);
+
+        ROS_INFO("moving arm");
+
+        move_group.move();
       }
       else  if (arr[0]>pic_width/2)  
       {//point in sight and right of the robot - rotate right
         //rotateBody(rotateTime, rotateVel, (-1)*rotateAngle);
         ROS_INFO("right!!!");
+        
+        ros::AsyncSpinner spinner(1);
+    spinner.start();
+    
+        moveit::planning_interface::MoveGroup group("arm");
+
+    group.setPlannerId("RRTConnectkConfigDefault");
+    group.setPoseReferenceFrame("base_footprint");
+    group.setStartStateToCurrentState();
+    group.setPlanningTime(10);
+    ROS_INFO("Planning reference frame: %s", group.getPlanningFrame().c_str());
+    ROS_INFO("End effector reference frame: %s", group.getEndEffectorLink().c_str());
+
+    geometry_msgs::PoseStamped target_pose;
+    target_pose.header.frame_id="base_footprint";
+    target_pose.header.stamp=ros::Time::now()+ros::Duration(2.1);
+    target_pose.pose.position.x = 0.5;
+    target_pose.pose.position.y = 0.7;
+    target_pose.pose.position.z = 0;
+    target_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0,0.0,0.0); ;
+    group.setPoseTarget(target_pose);
+    moveit::planning_interface::MoveGroup::Plan my_plan;
+    bool success = group.plan(my_plan);
+    ROS_INFO("plan: %s",success?"SUCCESS":"FAILED");
+    if(success) {
+        ROS_INFO("Moving...");
+        group.move();
+    }
+    sleep(5);
       }
     }
     else
@@ -353,7 +392,6 @@ void rotateBody(int rotateTime, double rotateVel, double rotateAngle)
     geometry_msgs::Twist cmd_msg;
     cmd_msg.linear.x = rotateVel;
     cmd_msg.angular.z = rotateAngle;
-
     chatter_pub.publish(cmd_msg);
     
     ros::spinOnce();
